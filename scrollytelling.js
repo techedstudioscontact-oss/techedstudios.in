@@ -46,48 +46,65 @@
     return Math.min(TOTAL_FRAMES - 1, Math.floor(p * (TOTAL_FRAMES - 1)));
   }
 
-  /* ── Canvas: COVER mode (fill viewport, no black bars) ── */
+  /* ── Canvas: High-DPI & Elite Scaling ── */
   function resizeCanvas() {
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const dpr = window.devicePixelRatio || 1;
+    // CSS pixels (layout)
+    canvas.style.width  = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    // Physical pixels (drawing surface)
+    canvas.width  = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+    
+    // Scale context to match
+    ctx.scale(dpr, dpr);
+    
+    // Smooth rendering for mobile
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    
     drawFrame(Math.round(currentFrame));
   }
 
   function drawFrame(idx) {
-    const W = canvas.width;
-    const H = canvas.height;
+    const W = window.innerWidth;
+    const H = window.innerHeight;
 
     ctx.clearRect(0, 0, W, H);
 
-    // Brand dark background
+    // Brand background (blends seamlessly with contain gaps)
     ctx.fillStyle = '#0B0F19';
     ctx.fillRect(0, 0, W, H);
 
     const img = images[idx];
     if (!img || !img.complete || !img.naturalWidth) return;
 
-    // COVER: scale to fill entire canvas
-    const imgW   = img.naturalWidth;
-    const imgH   = img.naturalHeight;
-    const scale  = Math.max(W / imgW, H / imgH);
-    const dw     = imgW * scale;
-    const dh     = imgH * scale;
-    const dx     = (W - dw) / 2;
-    const dy     = (H - dh) / 2;
+    const imgW = img.naturalWidth;
+    const imgH = img.naturalHeight;
+
+    // SEAMLESS SCALING:
+    // We use 'contain' (Math.min) to ensure the sphere is 100% visible on mobile.
+    // Because the background is matched, there are no 'boxy' black bars.
+    const scale = Math.min(W / imgW, H / imgH) * 0.98;
+
+    const dw = imgW * scale;
+    const dh = imgH * scale;
+    const dx = (W - dw) / 2;
+    const dy = (H - dh) / 2;
 
     ctx.drawImage(img, dx, dy, dw, dh);
 
-    // Subtle orange center glow over image
-    const grd = ctx.createRadialGradient(W / 2, H * 0.5, 0, W / 2, H * 0.5, W * 0.42);
+    // Subtle center glow
+    const grd = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, W * 0.45);
     grd.addColorStop(0, 'rgba(255,107,0,0.06)');
     grd.addColorStop(1, 'rgba(11,15,25,0)');
     ctx.fillStyle = grd;
     ctx.fillRect(0, 0, W, H);
 
-    // Edge vignette for cinematic depth
-    const vig = ctx.createRadialGradient(W / 2, H / 2, H * 0.3, W / 2, H / 2, H * 0.85);
+    // High-resolution edge vignette
+    const vig = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.3, W / 2, H / 2, Math.max(W, H) * 0.85);
     vig.addColorStop(0, 'rgba(11,15,25,0)');
-    vig.addColorStop(1, 'rgba(11,15,25,0.55)');
+    vig.addColorStop(1, 'rgba(11,15,25,0.7)');
     ctx.fillStyle = vig;
     ctx.fillRect(0, 0, W, H);
   }
