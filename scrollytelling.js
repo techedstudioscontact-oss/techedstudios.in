@@ -3,29 +3,29 @@
   'use strict';
 
   const TOTAL_FRAMES = 243;
-  const PAD = 3;
-  const FRAME_DIR = 'Frames/';
+  const PAD          = 3;
+  const FRAME_DIR    = 'Frames/';
   const FRAME_PREFIX = 'ezgif-frame-';
-  const FRAME_EXT = '.jpg';
+  const FRAME_EXT    = '.jpg';
 
   const BEATS = [
-    [0, 0.18],
-    [0.18, 0.38],
-    [0.38, 0.58],
-    [0.58, 0.78],
-    [0.78, 1.0],
+    [0,     0.18],
+    [0.18,  0.38],
+    [0.38,  0.58],
+    [0.58,  0.78],
+    [0.78,  1.0 ],
   ];
 
-  const section = document.getElementById('scrolly-section');
-  const canvas = document.getElementById('scrolly-canvas');
-  const ctx = canvas.getContext('2d');
-  const beatEls = document.querySelectorAll('.s-beat');
-  const dots = document.querySelectorAll('.s-dot');
+  const section  = document.getElementById('scrolly-section');
+  const canvas   = document.getElementById('scrolly-canvas');
+  const ctx      = canvas.getContext('2d');
+  const beatEls  = document.querySelectorAll('.s-beat');
+  const dots     = document.querySelectorAll('.s-dot');
   const dotsWrap = document.getElementById('s-dots');
 
-  const images = new Array(TOTAL_FRAMES).fill(null);
+  const images     = new Array(TOTAL_FRAMES).fill(null);
   let currentFrame = 0;
-  let targetFrame = 0;
+  let targetFrame  = 0;
 
   function pad(n, len) { return String(n).padStart(len, '0'); }
   function framePath(i) {
@@ -46,10 +46,10 @@
   function resizeCanvas() {
     const dpr = window.devicePixelRatio || 1;
 
-    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.width  = window.innerWidth + 'px';
     canvas.style.height = window.innerHeight + 'px';
 
-    canvas.width = window.innerWidth * dpr;
+    canvas.width  = window.innerWidth * dpr;
     canvas.height = window.innerHeight * dpr;
 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -85,9 +85,8 @@
     ctx.drawImage(img, (W - bgW) / 2, (H - bgH) / 2, bgW, bgH);
     ctx.restore();
 
-    /* ── 2. MAIN IMAGE (HEROIC → NO GAPS) ── */
-    // We use Math.max to fill the width, with 0.94 scale for the perfect visibility balance.
-    const mainScale = Math.max(W / imgW, H / imgH) * 0.94;
+    /* ── 2. MAIN IMAGE (CONTAIN → NO CUT) ── */
+    const mainScale = Math.min(W / imgW, H / imgH) * 0.92; // 👈 FIXED
 
     const dw = imgW * mainScale;
     const dh = imgH * mainScale;
