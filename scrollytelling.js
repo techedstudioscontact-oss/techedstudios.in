@@ -87,7 +87,7 @@
 
     /* ── 2. MAIN IMAGE (HEROIC → NO GAPS) ── */
     // We use Math.max to fill the width, with 0.94 scale for the perfect visibility balance.
-    const mainScale = Math.max(W / imgW, H / imgH) * 0.94; 
+    const mainScale = Math.max(W / imgW, H / imgH) * 0.94;
 
     const dw = imgW * mainScale;
     const dh = imgH * mainScale;
