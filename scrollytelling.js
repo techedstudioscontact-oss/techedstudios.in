@@ -85,8 +85,9 @@
     ctx.drawImage(img, (W - bgW) / 2, (H - bgH) / 2, bgW, bgH);
     ctx.restore();
 
-    /* ── 2. MAIN IMAGE (CONTAIN → NO CUT) ── */
-    const mainScale = Math.min(W / imgW, H / imgH) * 0.92; // 👈 FIXED
+    /* ── 2. MAIN IMAGE (HEROIC → NO GAPS) ── */
+    // We use Math.max to fill the width, with 0.94 scale for the perfect visibility balance.
+    const mainScale = Math.max(W / imgW, H / imgH) * 0.94; 
 
     const dw = imgW * mainScale;
     const dh = imgH * mainScale;
