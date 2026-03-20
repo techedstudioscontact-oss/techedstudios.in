@@ -72,39 +72,50 @@
 
     ctx.clearRect(0, 0, W, H);
 
-    // Brand background (blends seamlessly with contain gaps)
-    ctx.fillStyle = '#0B0F19';
-    ctx.fillRect(0, 0, W, H);
-
     const img = images[idx];
     if (!img || !img.complete || !img.naturalWidth) return;
 
     const imgW = img.naturalWidth;
     const imgH = img.naturalHeight;
 
-    // ELITE HEROIC SCALE:
-    // We use a slightly scaled-down 'Cover' (0.95) to keep the cinematic impact 
-    // but pull the edges in just enough so the sphere fits perfectly.
-    const scale = Math.max(W / imgW, H / imgH) * 0.95;
+    // 1. CINEMATIC BACKGROUND GLOW
+    // We draw a blurred, scaled-up version of the image for that 'Apple' feel.
+    ctx.save();
+    ctx.filter = 'blur(60px)';
+    const bgScale = Math.max(W / imgW, H / imgH) * 1.3;
+    const bgW = imgW * bgScale;
+    const bgH = imgH * bgScale;
+    ctx.globalAlpha = 0.45; // Subtle background presence
+    ctx.drawImage(img, (W - bgW) / 2, (H - bgH) / 2, bgW, bgH);
+    ctx.restore();
 
-    const dw = imgW * scale;
-    const dh = imgH * scale;
+    // 2. MAIN SPHERE SCALING
+    // We use the 95% scale requested+verified previously
+    const mainScale = Math.max(W / imgW, H / imgH) * 0.95;
+    const dw = imgW * mainScale;
+    const dh = imgH * mainScale;
+    
+    // Subtle float animation based on current index
+    const floatY = Math.sin(Date.now() / 1500) * 12;
+    
     const dx = (W - dw) / 2;
-    const dy = (H - dh) / 2;
+    const dy = (H - dh) / 2 + floatY;
 
+    // Draw main high-quality frame
     ctx.drawImage(img, dx, dy, dw, dh);
 
-    // Subtle center glow
-    const grd = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, W * 0.45);
-    grd.addColorStop(0, 'rgba(255,107,0,0.06)');
+    // 3. OVERLAYS FOR CINEMATIC DEPTH
+    // Subtle white-hot center glow
+    const grd = ctx.createRadialGradient(W / 2, H / 2 + floatY, 0, W / 2, H / 2 + floatY, W * 0.45);
+    grd.addColorStop(0, 'rgba(255,107,0,0.08)');
     grd.addColorStop(1, 'rgba(11,15,25,0)');
     ctx.fillStyle = grd;
     ctx.fillRect(0, 0, W, H);
 
-    // High-resolution edge vignette
-    const vig = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.3, W / 2, H / 2, Math.max(W, H) * 0.85);
-    vig.addColorStop(0, 'rgba(11,15,25,0)');
-    vig.addColorStop(1, 'rgba(11,15,25,0.7)');
+    // Vignette to hide background edges
+    const vig = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.2, W / 2, H / 2, Math.max(W, H) * 0.9);
+    vig.addColorStop(0, 'rgba(11,15,25,0.1)');
+    vig.addColorStop(1, 'rgba(11,15,25,0.85)');
     ctx.fillStyle = vig;
     ctx.fillRect(0, 0, W, H);
   }
