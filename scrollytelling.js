@@ -82,10 +82,10 @@
     const imgW = img.naturalWidth;
     const imgH = img.naturalHeight;
 
-    // SEAMLESS SCALING:
-    // We use 'contain' (Math.min) to ensure the sphere is 100% visible on mobile.
-    // Because the background is matched, there are no 'boxy' black bars.
-    const scale = Math.min(W / imgW, H / imgH) * 0.98;
+    // ELITE HEROIC SCALE:
+    // We use a slightly scaled-down 'Cover' (0.9) to keep the cinematic impact 
+    // but pull the edges in just enough so the sphere fits perfectly.
+    const scale = Math.max(W / imgW, H / imgH) * 0.92;
 
     const dw = imgW * scale;
     const dh = imgH * scale;
