@@ -83,9 +83,9 @@
     const imgH = img.naturalHeight;
 
     // ELITE HEROIC SCALE:
-    // We use a slightly scaled-down 'Cover' (0.96) to keep the cinematic impact 
+    // We use a slightly scaled-down 'Cover' (0.95) to keep the cinematic impact 
     // but pull the edges in just enough so the sphere fits perfectly.
-    const scale = Math.max(W / imgW, H / imgH) * 0.96;
+    const scale = Math.max(W / imgW, H / imgH) * 0.95;
 
     const dw = imgW * scale;
     const dh = imgH * scale;
